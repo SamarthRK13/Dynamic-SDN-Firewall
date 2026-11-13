@@ -1,0 +1,5 @@
+/pox/
+__pycache__/
+*.pyc
+/logs/
+/results/
