@@ -128,7 +128,7 @@ sudo python3 experiments/run_experiments.py --repeat 1 && python3 experiments/pl
 
 ### Table 2: Reaction Time vs. Flood Rate (Dynamic Firewall)
 
-$$\text{Total Response Time} = T_{\text{detection}} + T_{\text{rule\_install}}$$
+$$\text{Total Response Time} = T_{\text{detection}} + T_{\text{install}}$$
 
 | Flood Rate (conn/s) | Evidence Detection ($T_{\text{detection}}$) | Rule Installation ($T_{\text{install}}$) | Total Response Time |
 |:---:|:---:|:---:|:---:|

@@ -207,11 +207,11 @@ class FirewallTopo(Topo):
 
 #### 2. Performance Metrics Equations (`experiments/plot_results.py`)
 * **Success Rate (%):**
-  $$\text{Success \%} = \frac{N_{\text{successful\_requests}}}{N_{\text{total\_requests}}} \times 100$$
+  $$\text{Success \%} = \frac{N_{\text{successful}}}{N_{\text{total}}} \times 100$$
 * **Total Blocking Reaction Time ($T_{\text{response}}$):**
-  $$T_{\text{response}} = T_{\text{detection}} + T_{\text{rule\_install}}$$
+  $$T_{\text{response}} = T_{\text{detection}} + T_{\text{install}}$$
   - $T_{\text{detection}}$: Time elapsed between the 1st packet of the anomaly evidence and the 25th packet triggering the verdict.
-  - $T_{\text{rule\_install}}$: Time between sending `ofp_flow_mod` and receiving `OFPT_BARRIER_REPLY`.
+  - $T_{\text{install}}$: Time between sending `ofp_flow_mod` and receiving `OFPT_BARRIER_REPLY`.
 
 ---
 

@@ -99,7 +99,7 @@ The following results were measured directly from real TCP socket traffic across
 
 ### Table 2: Reaction Time Scaling vs Attack Velocity (Dynamic Firewall)
 
-$$\text{Total Blocking Reaction Time} = T_{\text{detection}} + T_{\text{rule\_installation}}$$
+$$\text{Total Blocking Reaction Time} = T_{\text{detection}} + T_{\text{install}}$$
 
 | Attack Rate (conn/s) | Anomaly Detection Delay ($T_{\text{detection}}$) | Hardware Rule Installation ($T_{\text{install}}$) | Total Response Time |
 |:---:|:---:|:---:|:---:|
