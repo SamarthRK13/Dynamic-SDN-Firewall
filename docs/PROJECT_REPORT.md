@@ -165,17 +165,117 @@ $$\text{Total Response Time} = T_{\text{detection}} + T_{\text{install}}$$
 
 ---
 
-## 7. Mandatory Screenshots (SS) Checklist for Submission
+## 7. Experimental Verification & Live Demonstration Screenshots
 
-| # | Screenshot Identifier | What to Capture in VM | Rubric Mapping |
-|:---:|---|---|---|
-| **SS 1** | **Mininet Topology & Pingall** | Terminal running `net` and `pingall` showing 0% packet loss across all hosts (`h1`–`h4`, `srv`, `log`). | D1.1, D1.3 |
-| **SS 2** | **Concurrent TCP Sockets** | Output of `h2 python3 app/client.py --count 8 --parallel 4` showing parallel multi-client requests. | D1.2, D1.4 |
-| **SS 3** | **Centralized Logger Output** | Terminal showing `logger_server.py` receiving JSON events (`SWITCH_CONNECTED`, `DENY`, `BLOCK`). | D1.2, D2.1 |
-| **SS 4** | **Policy Classification** | Terminal showing `h1` allowed on admin port 2222 while `h2` is denied on port 2222. | D2.1, D2.2 |
-| **SS 5** | **Dynamic Attack Block (OVS)** | Terminal showing controller logging `BLOCK 10.0.0.4 CONN_FLOOD` and `ovs-ofctl dump-flows s1` with `priority=60000,actions=drop`. | D2.2, D2.3 |
-| **SS 6** | **Auto-Recovery & Escalation** | Terminal showing switch `FlowRemoved` log followed by repeat attack with `hard_timeout=40`. | D2.2, D2.3 |
-| **SS 7** | **Performance Benchmark & Report**| Terminal output of `system_check.py` (12/12 passed) and the 3 generated PNG plots. | D1.5, D2.4 |
+The following screenshots were captured live during the system execution and evaluation demo on the Ubuntu Virtual Machine, validating every requirement of the D1 (15 Marks) and D2 (25 Marks) evaluation rubrics.
+
+### Screenshot 1: Mininet Network Topology & Concurrent TCP Sockets (Step a)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_45_34.png" width="95%" alt="Screenshot 1: Mininet Topology and Concurrent TCP Clients">
+</p>
+
+* **Rubric Mapping:** **D1.1** (Problem Understanding & Architecture), **D1.2** (TCP Sockets & Concurrency), **D1.3** (Mininet Topology).
+* **Technical Observation:** Terminal 3 displays the Mininet link topology (`net`) connecting hosts `h1`–`h4` to Open vSwitch `s1` and application server `srv`. Host `h2` launches 4 concurrent client threads making simultaneous requests to `srv:8080`, all completing with 100% success (`8/8 ok`). In Terminal 1, the centralized security logger is online and recording active connections over TCP port 9999.
+
+---
+
+### Screenshot 2: Traffic Classification by IP, Port & Protocol (Step b)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_47_05.png" width="95%" alt="Screenshot 2: Policy-Based Traffic Classification">
+</p>
+
+* **Rubric Mapping:** **D2.1** (Application Functionality), **D2.2** (Policy Classification Engine).
+* **Technical Observation:** Privileged host `h1` connects to management port 2222 and is **ALLOWED** under Rule R1. Host `h2` attempts to connect to the same port 2222 and is immediately **DENIED** with connection timeout under Rule R2. Legacy unencrypted Telnet (port 23) is dropped network-wide (Rule R4). In Terminal 2, the controller logs `DENY 10.0.0.2 -> 10.0.0.100:2222 (ADMIN, rule R2)`, and Terminal 1 captures the corresponding JSON `DENY` event.
+
+---
+
+### Screenshot 3: TCP Connection Flood & Dynamic Hardware DROP Rule (Step c)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_47_48.png" width="95%" alt="Screenshot 3: Dynamic Attack Detection and Hardware Drop Enforcement">
+</p>
+
+* **Rubric Mapping:** **D2.2** (Dynamic SDN Defense), **D2.3** (Challenging Scenario — Volumetric Flood).
+* **Technical Observation:** Adversary host `h4` launches an aggressive multi-threaded connection flood against `srv:8080`. The sliding-window detector triggers an anomaly verdict in **266 ms**. Terminal 2 logs `BLOCK 10.0.0.4 CONN_FLOOD, offence #1, 20s`. The controller purges old flows via `OFPFC_DELETE` and installs a line-rate drop rule into switch `s1` (`priority=60000, dl_type=0x800, nw_src=10.0.0.4, actions=drop`). Subsequent pings from `h4` suffer **100% packet loss**, while legitimate client `h2` continues transacting with **100% success** (`3/3 ok`).
+
+---
+
+### Screenshot 4: Autonomous Switch Recovery via hard_timeout (Step d)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_48_54.png" width="95%" alt="Screenshot 4: Autonomous Hardware Recovery">
+</p>
+
+* **Rubric Mapping:** **D2.2** (Automatic Recovery & Switch Timers).
+* **Technical Observation:** After the 20-second `hard_timeout` expires, Open vSwitch `s1` automatically purges the drop flow from hardware without requiring controller polling. OVS dispatches an asynchronous `OFPT_FLOW_REMOVED` message containing dropped packet counters. Terminal 2 logs `RECOVERY 10.0.0.4: block expired, packets dropped`, and Terminal 1 streams an `UNBLOCK` event. Host `h4` connectivity is fully restored.
+
+---
+
+### Screenshot 5: Repeat Offender Exponential Penalty Escalation (Step e)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_49_08.png" width="95%" alt="Screenshot 5: Repeat Offender Escalation">
+</p>
+
+* **Rubric Mapping:** **D2.2** (Dynamic SDN Policy), **D2.3** (Robustness & Escalation).
+* **Technical Observation:** Upon recovering, host `h4` launches a second flood attack. The controller queries `self.offences['10.0.0.4']` and doubles the penalty duration. Terminal 2 logs `BLOCK 10.0.0.4 CONN_FLOOD ... offence #2, blocked for 40s`. The switch flow table dump confirms `hard_timeout=40`.
+
+---
+
+### Screenshot 6: Port Scan Detection & Mitigation (Step f)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_49_49.png" width="95%" alt="Screenshot 6: Port Scan Detection">
+</p>
+
+* **Rubric Mapping:** **D2.3** (Challenging Scenario — Reconnaissance Attack).
+* **Technical Observation:** Host `h3` initiates an automated TCP port scan. After probing 8 distinct target ports, the detector identifies horizontal reconnaissance and blocks `h3` in just **71.4 ms**. The scanner output confirms: `open ports found: none - h3 was blocked after 8 probes`. Terminal 2 logs `BLOCK 10.0.0.3 PORT_SCAN`.
+
+---
+
+### Screenshot 7: Persistent Policy Violations — Whole Host Quarantine (Step g)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_50_02.png" width="95%" alt="Screenshot 7: Policy Violation Quarantine">
+</p>
+
+* **Rubric Mapping:** **D2.2** (Dynamic Filtering), **D2.3** (Persistent Unauthorized Access).
+* **Technical Observation:** Host `h2` repeatedly attempts to probe the restricted management port 2222. After 5 consecutive denied attempts within 5 seconds, the detector flags `POLICY_VIOLATION`. The controller isolates the entire host, revoking even its legitimate access to public application port 8080.
+
+---
+
+### Screenshot 8: Robustness Under Centralized Logger Outage (Step h)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_50_43.png" width="95%" alt="Screenshot 8: Logger Outage Buffering">
+</p>
+
+* **Rubric Mapping:** **D2.3** (Fault Tolerance & Subsystem Failures).
+* **Technical Observation:** The central logger process is intentionally killed to simulate service failure. While the logger is down, the controller buffers security events in an in-memory queue without dropping packets or stalling control loop threads. When the logger restarts, the background `EventSender` thread reconnects and immediately flushes all buffered events with zero log loss.
+
+---
+
+### Screenshot 9: Controller Outage & Fail-Closed Security Posture (Step i)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_51_02.png" width="95%" alt="Screenshot 9: Controller Failure and Fail-Closed OVS">
+</p>
+
+* **Rubric Mapping:** **D2.3** (System Robustness & Fail-Closed Architecture).
+* **Technical Observation:** The POX controller process is terminated. Because Open vSwitch is configured with `failMode='secure'`, the switch refuses to forward unauthenticated new flows (fails closed). When the controller is restarted, switch `s1` seamlessly re-establishes OpenFlow communication (`SWITCH_CONNECTED`), restoring normal operations.
+
+---
+
+### Screenshot 10: Centralized Security Audit Log & Performance Results (Step j & k)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_51_51.png" width="95%" alt="Screenshot 10: Centralized Audit Trail and Results Table">
+</p>
+
+* **Rubric Mapping:** **D2.1** (Centralized Logging), **D2.4** (Performance Comparison).
+* **Technical Observation:** Inspection of `logs/security_events.log` confirms an immutable audit trail of all `SWITCH_CONNECTED`, `DENY`, `BLOCK`, `BLOCK_ENFORCED`, and `UNBLOCK` records. Below, the final live performance evaluation table displays the empirical comparison between Static and Dynamic firewall modes.
+
+---
+
+### Screenshot 11: End-to-End System Check Validation (12 / 12 Passed)
+<p align="center">
+  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_54_04.png" width="95%" alt="Screenshot 11: 12 of 12 System Checks Passed">
+</p>
+
+* **Rubric Mapping:** **D1.5** (Initial Testing & Verification), **D2.5** (Reproducible Final Demonstration).
+* **Technical Observation:** Execution of `sudo python3 tests/system_check.py` confirms that all 12 end-to-end integration tests pass with 100% success, validating pingall connectivity, socket concurrency, bulk data transfer (7.61 Mbit/s), dynamic blocking (248 ms), auto-recovery (8.5 s), repeat offender doubling, and port scan defense.
 
 ---
 
