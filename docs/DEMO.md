@@ -3,9 +3,9 @@
 **Duration:** ~10 minutes  
 **Format:** 3-Pane Integrated Tmux View (`bash scripts/demo.sh`) or 3 Independent Terminals  
 **Team Roster:**  
-* **Speaker 1 (Person 1):** Sockets, Architecture, Concurrency & Centralized Logger (`app/`)
-* **Speaker 2 (Person 2):** SDN Controller, Rules R1–R4, Sliding-Window Detector & Hardware Drop (`controller/`)
-* **Speaker 3 (Person 3):** Mininet Topology, TCLink Bottleneck, Attack Simulation & Benchmark Graphs (`topology/`, `traffic/`, `experiments/`)
+* **Speaker 1 (Suharshitha):** Sockets, Architecture, Concurrency & Centralized Logger (`app/`)
+* **Speaker 2 (Shrey Shetty):** SDN Controller, Rules R1–R4, Sliding-Window Detector & Hardware Drop (`controller/`)
+* **Speaker 3 (Samarth RK):** Mininet Topology, TCLink Bottleneck, Attack Simulation & Benchmark Graphs (`topology/`, `traffic/`, `experiments/`)
 
 ---
 
@@ -28,7 +28,7 @@
 
 ### Phase 1: Startup & System Architecture (Minutes 0:00 – 2:00)
 * **Action:** Run `bash scripts/demo.sh` (or show the three running panes).
-* **Who Speaks:** **Person 1** & **Person 3**
+* **Who Speaks:** **Suharshitha** & **Samarth RK**
 * **What to Show on Screen:**
   - Terminal 1 (Top-Left): Logger displays `LOGGER_SERVER_ONLINE: listening on 127.0.0.1:9999`.
   - Terminal 2 (Top-Right): Controller displays `POX ichthyosaur connected to switch s1 (dpid=1)`.
@@ -42,7 +42,7 @@
 
 ### Phase 2: TCP Sockets & Multi-Client Concurrency (Minutes 2:00 – 3:30)
 * **Action:** Mininet runs parallel requests: `h2 python3 app/client.py --count 8 --parallel 4 --rate 1`.
-* **Who Speaks:** **Person 1**
+* **Who Speaks:** **Suharshitha**
 * **What to Show on Screen:**
   - 4 parallel client worker threads receiving `PONG` and application data payloads at line rate (~9.8 Mbit/s).
   - Terminal 1 shows active TCP connection metadata logged.
@@ -60,7 +60,7 @@
   h2 python3 app/client.py --port 2222 --request STATS --count 1
   h2 nc -zv -w 2 10.0.0.3 23
   ```
-* **Who Speaks:** **Person 2**
+* **Who Speaks:** **Shrey Shetty**
 * **What to Show on Screen:**
   - `h1` $\to$ port 2222: **ALLOWED** (Admin Rule R1).
   - `h2` $\to$ port 2222: **DENIED** with connection timeout (Rule R2).
@@ -76,7 +76,7 @@
 
 ### Phase 4: Volumetric Attack Detection & Line-Rate Mitigation (Minutes 5:00 – 7:00)
 * **Action:** Press **Enter** for Step (c). Host `h4` runs `traffic/attacker.py flood`.
-* **Who Speaks:** **Person 2** & **Person 3**
+* **Who Speaks:** **Shrey Shetty** & **Samarth RK**
 * **What to Show on Screen:**
   - Attacker `h4` fires rapid TCP SYNs. After ~24 attempts, all remaining attempts output `TIMEOUT`.
   - Terminal 2 displays: `BLOCK 10.0.0.4 CONN_FLOOD, offence #1, 20s, response 266.4 ms`.
@@ -94,7 +94,7 @@
 
 ### Phase 5: Autonomous Recovery & Repeat Offender Escalation (Minutes 7:00 – 8:30)
 * **Action:** Press **Enter** for Step (d) and Step (e).
-* **Who Speaks:** **Person 2**
+* **Who Speaks:** **Shrey Shetty**
 * **What to Show on Screen:**
   - After 20 seconds, the block rule automatically disappears from switch `s1`.
   - Terminal 2 displays: `RECOVERY 10.0.0.4: block expired, 215 packets dropped`.
@@ -107,7 +107,7 @@
 
 ### Phase 6: Performance Evaluation & Empirical Charts (Minutes 8:30 – 10:00)
 * **Action:** Press **Enter** for Step (k). The 3 benchmark charts open on screen.
-* **Who Speaks:** **Person 3**
+* **Who Speaks:** **Samarth RK**
 * **What to Show on Screen:**
   - Display `fig1_normal_users.png`, `fig2_flood_timeline.png`, and `fig3_response_time.png`.
 * **What to Say to the Examiner:**

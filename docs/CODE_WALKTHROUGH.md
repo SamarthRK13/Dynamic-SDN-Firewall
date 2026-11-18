@@ -7,9 +7,9 @@
 
 ## 📑 Table of Contents
 1. [Architecture & System Flow Overview](#1-architecture--system-flow-overview)
-2. [Person 1: TCP Sockets & Centralized Logging Server](#2-person-1-tcp-sockets--centralized-logging-server)
-3. [Person 2: POX SDN Controller & Dynamic Defense Engine](#3-person-2-pox-sdn-controller--dynamic-defense-engine)
-4. [Person 3: Mininet Topology, Attack Simulation & Benchmarking](#4-person-3-mininet-topology-attack-simulation--benchmarking)
+2. [Suharshitha: TCP Sockets & Centralized Logging Server](#2-suharshitha-tcp-sockets--centralized-logging-server)
+3. [Shrey Shetty: POX SDN Controller & Dynamic Defense Engine](#3-shrey-shetty-pox-sdn-controller--dynamic-defense-engine)
+4. [Samarth RK: Mininet Topology, Attack Simulation & Benchmarking](#4-samarth-rk-mininet-topology-attack-simulation--benchmarking)
 5. [Top 25 Viva Questions with Expert Model Answers](#5-top-25-viva-questions-with-expert-model-answers)
 6. [5-Minute Practical Code Experiments (Self-Test)](#6-5-minute-practical-code-experiments-self-test)
 
@@ -66,7 +66,7 @@
 
 ---
 
-## 2. Person 1: TCP Sockets & Centralized Logging Server
+## 2. Suharshitha: TCP Sockets & Centralized Logging Server
 
 ### Primary Code Responsibilities:
 * `app/server.py`: Multi-threaded TCP server on ports 8080 (Service) and 2222 (Admin).
@@ -117,7 +117,7 @@ def record_event(self, json_data):
 
 ---
 
-## 3. Person 2: POX SDN Controller & Dynamic Defense Engine
+## 3. Shrey Shetty: POX SDN Controller & Dynamic Defense Engine
 
 ### Primary Code Responsibilities:
 * `controller/firewall.py`: POX OpenFlow 1.0 component handling PacketIn, FlowMod, Barrier, and FlowRemoved.
@@ -182,7 +182,7 @@ def block(self, ip):
 
 ---
 
-## 4. Person 3: Mininet Topology, Attack Simulation & Benchmarking
+## 4. Samarth RK: Mininet Topology, Attack Simulation & Benchmarking
 
 ### Primary Code Responsibilities:
 * `topology/topo.py`: Mininet custom topology (`FirewallTopo`), link bandwidth configuration (`TCLink`).
@@ -225,7 +225,7 @@ class FirewallTopo(Topo):
 3. **What is the difference between `PacketIn`, `FlowMod`, and `PacketOut`?**  
    *Answer:* `PacketIn` is an asynchronous message sent from switch to controller when a packet misses all flow entries. `FlowMod` is sent from controller to switch to install, modify, or delete a forwarding/drop rule in the flow table. `PacketOut` tells the switch to immediately send a specific packet out of one or more physical ports without necessarily installing a flow rule.
 
-### Sockets & Application (Person 1)
+### Sockets & Application (Suharshitha)
 4. **Why is TCP chosen over UDP for this application?**  
    *Answer:* TCP provides connection-oriented, reliable, ordered delivery with built-in flow control and congestion avoidance. Our client-server commands (`PING`, `DATA`, `STATS`) require reliable delivery, and TCP connection establishment (SYN $\to$ SYN-ACK $\to$ ACK) provides distinct connection events for attack detection.
 5. **How does the server handle multiple clients simultaneously?**  
@@ -237,7 +237,7 @@ class FirewallTopo(Topo):
 8. **How does the Centralized Logger ensure zero log loss if the logger server crashes?**  
    *Answer:* In `controller/firewall.py`, the `EventSender` uses a non-blocking in-memory `Queue`. If the TCP socket to port 9999 disconnects, the background worker thread buffers unsent events and retries connecting every 2 seconds. Once reconnected, it flushes all queued events.
 
-### SDN Controller & Dynamic Defense (Person 2)
+### SDN Controller & Dynamic Defense (Shrey Shetty)
 9. **Explain how the 5-second sliding window works.**  
    *Answer:* The controller maintains a `deque` of `(timestamp, dst_ip, dst_port)` per source IP. Whenever a new TCP SYN arrives, it appends the current timestamp and pops all events older than $(now - 5.0\text{ s})$. If the remaining events exceed 25, it flags `CONN_FLOOD`.
 10. **Why do we only feed TCP SYN packets to the anomaly detector?**  
@@ -253,7 +253,7 @@ class FirewallTopo(Topo):
 15. **What is the difference between `idle_timeout` and `hard_timeout`?**  
     *Answer:* `idle_timeout` removes a flow entry if no packets match it for $X$ seconds. `hard_timeout` forcibly removes the flow entry after $X$ seconds, regardless of whether traffic is actively matching it.
 
-### Mininet, Attacks & Evaluation (Person 3)
+### Mininet, Attacks & Evaluation (Samarth RK)
 16. **Why is the link bandwidth between switch `s1` and server `srv` limited to 10 Mbit/s?**  
     *Answer:* In virtual network emulation, CPU speed can artificially allow high bandwidth. Limiting the link to 10 Mbit/s (`bw=10, cls=TCLink`) creates a realistic network bottleneck to empirically demonstrate how an unmitigated attack starves legitimate traffic.
 17. **What is `failMode='secure'` in Open vSwitch?**  
