@@ -334,22 +334,30 @@ The following screenshots were captured live during the system execution and eva
 
 ---
 
-### System Check Validation: Automated Integration Pre-Check Safeguard
+### System Check Validation: End-to-End Test Suite Execution (12 / 12 Passed)
 
-#### Screenshot 11: Automated Test Suite Invocation & Controller Port Collision Protection
+#### Screenshot 11: Automated Regression Suite & 100% Verification Across All Subsystems
 <p align="center">
-  <img src="screenshots/VirtualBox_Ubuntu_18_11_2026_19_54_04.png" width="95%" alt="Screenshot 11: System Check Test Harness and Port Collision Guard">
+  <img src="screenshots/system_check_validation_12_passed.png" width="95%" alt="Screenshot 11: 12 of 12 System Integration Tests Passed">
 </p>
 
-* **Rubric Mapping:** **D1.5** (Initial Testing & Verification), **D2.5** (Automated Test Suite & Pre-Flight Checks).
+* **Rubric Mapping:** **D1.5** (Initial Testing & Verification), **D2.3** (Persistent Policy Violations & Quarantine), **D2.5** (Comprehensive Reproducible Test Suite).
 * **Live Screen Data & Observations:**
-  * **Test Harness Execution:** `sudo python3 tests/system_check.py` is invoked to perform full end-to-end regression validation.
-  * **Port Collision Safeguard:** The test framework performs an environment pre-flight audit before spawning mock topology instances:
-    ```
-    Starting logger + controller + Mininet (block time 8s) ...
-    a controller is already running on port 6633 - stop it first (./scripts/cleanup.sh)
-    ```
-  * **Robustness Guarantee:** Demonstrates the system's defensive programming: automated test suites actively guard against dual-controller port binding conflicts, guaranteeing clean test repeatability when orchestrating Mininet and POX.
+  * **Defensive Port Cleanup:** After invoking `./scripts/cleanup.sh` to release controller port 6633, `sudo python3 tests/system_check.py` runs with an accelerated 8-second block timer.
+  * **100% Pass Rate Across All 12 Independent Subsystem Checks:**
+    1. `[PASS] Mininet connectivity` — `pingall loss 0.0%` (OpenFlow forwarding verified)
+    2. `[PASS] Controller -> logger over TCP` — `1 SWITCH_CONNECTED events in the central log` (reliable socket telemetry)
+    3. `[PASS] 3 clients on 3 hosts at the same time` — `h1:10/10 h2:10/10 h3:10/10` (multi-threaded socket concurrency)
+    4. `[PASS] Bulk transfer DATA 500 kB` — **`8.95 Mbit/s`** throughput over the 10 Mbit/s bottleneck link
+    5. `[PASS] Classification by source` — Admin port 2222: `h1 allowed (R1): True`, `h2 denied (R2): True`
+    6. `[PASS] DENY events reach the logger` — `1 DENY events for h2`
+    7. `[PASS] Flood detected and blocked` — **`response 242.9 ms`** (detection 234.1 ms + install 8.8 ms); attacker: `{'ok': 24, 'timeout': 176}`
+    8. `[PASS] Attacker cut off, others unaffected` — `h4 ping blocked: True`, legitimate client `h2 5/5 ok`
+    9. `[PASS] Automatic recovery after 8s` — `UNBLOCK after 8.2 s, 179 packets dropped; h4 3/3 ok`
+    10. `[PASS] Repeat offender is blocked longer` — Stateful escalation block durations for `h4`: `[8, 16] s`
+    11. `[PASS] Repeated denied access -> whole host blocked` — `POLICY_VIOLATION` triggered after 5 consecutive denied attempts; `h2 -> port 8080 now: blocked` (quarantine enforcement)
+    12. `[PASS] Port scan detected and blocked` — **`response 35.6 ms`**; scanner discovered 0 open ports (`got 7 answers out of 202`)
+  * **Final Verdict:** **`12 / 12 passed - report: results/system_check/report.md`**, confirming zero regressions across all project requirements.
 
 ---
 
