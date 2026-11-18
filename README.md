@@ -196,9 +196,9 @@ SDN-Firewall-FINAL/
 
 | Member | Focus Area | Files Owned | Core Viva Competencies |
 |---|---|---|---|
-| **Member 1** | **TCP Sockets & Centralized Logging** | `app/server.py`<br>`app/client.py`<br>`app/logger_server.py` | TCP 3-way handshake, socket framing (`\n`), thread pool concurrency, `BoundedSemaphore(50)`, non-blocking event streaming to port 9999. |
-| **Member 2** | **SDN Controller & Dynamic Defense** | `controller/firewall.py`<br>`controller/rules.py`<br>`config/policy.json` | POX OpenFlow 1.0 architecture, `PacketIn`, rule matching, 5s sliding window, `priority=60000` drop rules, `OFPFC_DELETE`, `BarrierRequest`, `FlowRemoved` recovery. |
-| **Member 3** | **Mininet, Attacks & Benchmarking** | `topology/`<br>`traffic/attacker.py`<br>`tests/`<br>`experiments/` | Mininet virtual topology, OVS `s1` (`failMode='secure'`), 10 Mbps bottleneck emulation, SYN floods/port scans, baseline vs dynamic evaluation metrics. |
+| **Suharshitha** | **TCP Sockets & Centralized Logging** | `app/server.py`<br>`app/client.py`<br>`app/logger_server.py` | TCP 3-way handshake, socket framing (`\n`), thread pool concurrency, `BoundedSemaphore(50)`, non-blocking event streaming to port 9999. |
+| **Shrey Shetty** | **SDN Controller & Dynamic Defense** | `controller/firewall.py`<br>`controller/rules.py`<br>`config/policy.json` | POX OpenFlow 1.0 architecture, `PacketIn`, rule matching, 5s sliding window, `priority=60000` drop rules, `OFPFC_DELETE`, `BarrierRequest`, `FlowRemoved` recovery. |
+| **Samarth RK** | **Mininet, Attacks & Benchmarking** | `topology/`<br>`traffic/attacker.py`<br>`tests/`<br>`experiments/` | Mininet virtual topology, OVS `s1` (`failMode='secure'`), 10 Mbps bottleneck emulation, SYN floods/port scans, baseline vs dynamic evaluation metrics. |
 
 ---
 

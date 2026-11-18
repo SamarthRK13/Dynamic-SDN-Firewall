@@ -16,9 +16,9 @@ Our solution deploys a **POX OpenFlow 1.0 SDN controller** managing an **Open vS
 
 | Team Member | Role & Responsibilities | Key Code Components |
 |---|---|---|
-| **Member 1** | **TCP Sockets & Centralized Logging Server** | `app/server.py`, `app/client.py`, `app/logger_server.py` |
-| **Member 2** | **SDN Controller, Rules & Dynamic Defense Engine** | `controller/firewall.py`, `controller/rules.py`, `config/policy.json` |
-| **Member 3** | **Mininet Topology, Attack Simulation & Benchmarking** | `topology/`, `traffic/attacker.py`, `tests/`, `experiments/` |
+| **Suharshitha** | **TCP Sockets & Centralized Logging Server** | `app/server.py`, `app/client.py`, `app/logger_server.py` |
+| **Shrey Shetty** | **SDN Controller, Rules & Dynamic Defense Engine** | `controller/firewall.py`, `controller/rules.py`, `config/policy.json` |
+| **Samarth RK** | **Mininet Topology, Attack Simulation & Benchmarking** | `topology/`, `traffic/attacker.py`, `tests/`, `experiments/` |
 
 ---
 
